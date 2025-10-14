@@ -20,21 +20,21 @@ const themes = [
     icon: darkThemeIcon,
     label: 'Dark',
   },
-  {
-    name: 'earth',
-    icon: earthThemeIcon,
-    label: 'Earth',
-  },
-  {
-    name: 'ocean',
-    icon: blueThemeIcon,
-    label: 'Ocean',
-  },
-  {
-    name: 'sand',
-    icon: orangeThemeIcon,
-    label: 'Sand',
-  }
+  // {
+  //   name: 'earth',
+  //   icon: earthThemeIcon,
+  //   label: 'Earth',
+  // },
+  // {
+  //   name: 'ocean',
+  //   icon: blueThemeIcon,
+  //   label: 'Ocean',
+  // },
+  // {
+  //   name: 'sand',
+  //   icon: orangeThemeIcon,
+  //   label: 'Sand',
+  // }
 ]
 
 @customElement('theme-switcher')

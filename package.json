@@ -1,10 +1,10 @@
 {
-	"name": "odyssey-theme",
+	"name": "saffron-shark-labs",
 	"version": "3.1.0",
-	"private": false,
+	"private": true,
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:treefarmstudio/odyssey-theme"
+		"url": "git@github.com:ichbindev/saffron-shark-labs.git"
 	},
 	"scripts": {
 		"dev": "astro dev",

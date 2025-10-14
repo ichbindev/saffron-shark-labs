@@ -40,8 +40,8 @@
 [data-theme='default'] {
 	color-scheme: light;
 	/* Theme Colors */
-	--theme-primary: hsl(0, 0%, 0%);
-	--theme-primary-hover: hsl(0, 0%, 20%);
+	--theme-primary: #e38a20;
+	--theme-primary-hover: #eb870f;
 	--theme-on-primary: #fff;
 
 	--theme-bg: #fff;
@@ -74,9 +74,9 @@
 [data-theme='dark'] {
 	color-scheme: dark;
 	/* Theme Colors */
-	--theme-primary: hsl(0, 0%, 100%);
-	--theme-primary-hover: hsl(0, 0%, 90%);
-	--theme-on-primary: hsl(0, 0%, 0%);
+	--theme-primary: #e38a20;
+	--theme-primary-hover: #eb870f;
+	--theme-on-primary: #fff;
 
 	--theme-bg: hsl(0, 0%, 2%);
 	--theme-on-bg: hsl(0, 0%, 100%);
