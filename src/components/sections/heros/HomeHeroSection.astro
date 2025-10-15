@@ -9,14 +9,15 @@ import {ThemeSwitcher} from '../../theme-switcher/theme-switcher';
 	<section class="hero-section__section">
 		<div class="hero-section__text">
 				<h1>Saffron Shark Labs</h1>
-				<p>
+        <p>Coming soon!</p>
+				<!-- <p>
 					A marketing website theme built with <a
 						href="https://astro.build"
 						target="_blank"
 						rel="noreferrer">Astro</a
 					> and carefully crafted for startups and businesses.
-				</p>
-				<div class="hero-btns__container">
+				</p> -->
+				<!-- <div class="hero-btns__container">
 					<Button href="/theme/get-started" customIcon
 						>Get Started
             <Fragment slot="icon">
@@ -25,7 +26,7 @@ import {ThemeSwitcher} from '../../theme-switcher/theme-switcher';
             </Button
 					>
 					<Button href="/theme/style-guide" unelevated>Style Guide</Button>
-				</div>
+				</div> -->
         {settings.enableThemeSwitcher && <ThemeSwitcher client:only/>}
 		</div>
 		<div class="hero-section__image">
@@ -52,6 +53,9 @@ import {ThemeSwitcher} from '../../theme-switcher/theme-switcher';
 	.hero-section__text {
 		justify-self: center;
 		max-width: 25rem;
+    p {
+      color: #e38a20;
+    }
 	}
 	.hero-btns__container {
 		display: flex;
