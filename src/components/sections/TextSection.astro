@@ -1,11 +1,13 @@
 ---
 import Container from '../core/Container.astro';
 
-const {narrow} = Astro.props;
+const { narrow, left } = Astro.props;
+
+const className = left ? 'text__section __left' : 'text__section';
 ---
 
-<Container narrow={narrow}>
-  <section class="text__section">
+<Container narrow={narrow} left={left}>
+  <section class={className}>
     <slot></slot>
   </section>
 </Container>
