@@ -2,6 +2,8 @@
 import { Icon } from 'astro-icon/components';
 import Container  from '../core/Container.astro';
 import Plug from './Plug.astro';
+import { ThemeSwitcher } from '../theme-switcher/theme-switcher';
+import { literal } from 'astro:schema';
 
 const { footerSocials, footerLists, copyrightName, background, color, showPlug: showPlug = true } =
   Astro.props;
@@ -10,7 +12,7 @@ const { footerSocials, footerLists, copyrightName, background, color, showPlug: 
 <footer
   style={background && `--footer-bg:${background}; --footer-color:${color}`}
 >
-  <!-- <Container>
+  <Container>
     <div class="footer-grid__container">
       <div class="footer-brand__container">
         <div>
@@ -48,13 +50,17 @@ const { footerSocials, footerLists, copyrightName, background, color, showPlug: 
           </div>
         ))
       }
+      <div>
+        <p><strong>Theme</strong></p>
+        <ThemeSwitcher client:only="lit" />
+      </div>
     </div>
     <div class="footer-copyright__container">
-      {showPlug && <Plug/>}
+      <!-- {showPlug && <Plug/>} -->
       <p>Copyright &copy; {new Date().getFullYear()} {copyrightName}</p>
     </div>
 
-  </Container> -->
+  </Container>
 </footer>
 
 <style>

@@ -1,7 +1,7 @@
 :root {
 	/* Theme Colors */
-	--theme-primary: hsl(0, 0%, 0%);
-	--theme-primary-hover: hsl(0, 0%, 20%);
+	--theme-primary: #e38a20;
+	--theme-primary-hover: #eb870f;
 	--theme-on-primary: #fff;
 
 	--theme-bg: #fff;

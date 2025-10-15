@@ -13,7 +13,7 @@ const themes = [
   {
     name: 'default',
     icon: classicThemeIcon,
-    label: 'Classic',
+    label: 'Light',
   },
   {
     name: 'dark',
