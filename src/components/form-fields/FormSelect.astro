@@ -7,13 +7,16 @@ const { label, name, options, required} = Astro.props;
     width: 100%;
     padding: 0.5rem;
     border: 2px solid var(--form-field-border-color, #ccc);
-    color: var(--form-field-input-color, #000000);
+    color: gray;
     border-radius: var(--form-field-border-radius, 0.25rem);
     outline-style: none;
     font-size: 1rem;
     font-family: inherit;
     /* Fixes gloss effect on select dropdowns in Safari */
     -webkit-appearance: none;
+  }
+  .form-field__container select:valid {
+    color: var(--form-field-input-color, #000000);
   }
   .form-field__container select:focus {
     border: 2px solid var(--form-field-border-focus-color, #000);
@@ -23,10 +26,10 @@ const { label, name, options, required} = Astro.props;
 <div class="form-field__container">
   {label && <label for={name}>{label}</label>}
   <select name={name} required={required}>
-    <option disabled selected value="">==SELECT AN OPTION==</option>
+    <option disabled selected value="">Select an option</option>
     {options?.map((option) => (
-          <option value={option}>{option}</option>
-        ))}
+      <option value={option}>{option}</option>
+    ))}
   </select>
 </div>
 
