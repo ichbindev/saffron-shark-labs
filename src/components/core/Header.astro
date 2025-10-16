@@ -1,5 +1,6 @@
 ---
-import { Icon } from 'astro-icon/components'
+import { Icon } from 'astro-icon/components';
+import Nav from './Nav.astro';
 const { navData, rightMenu } = Astro.props;
 ---
 
@@ -55,15 +56,7 @@ const { navData, rightMenu } = Astro.props;
   </a>
   </div>
   <div class="header-nav__container">
-    <slot name="nav">
-      {navData && <nav>
-        <ul>
-          {navData.map(navItem => (
-            (<li><a href={navItem.slug} >{navItem.title}</a></li>)
-          ))}
-        </ul>
-      </nav>}
-    </slot>
+    <Nav navData={navData} />
   </div>
   <div class="header-action-item__container">
     <slot name="action-item">
