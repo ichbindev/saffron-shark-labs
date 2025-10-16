@@ -9,10 +9,10 @@ const selectOptions = [
 
 ---
 
-<form name="Contact Form" method="POST" action="/contact-thank-you">
+<form name="Contact Form" method="POST" action="https://www.formbackend.com/f/a87d3fbfb9e67690">
   <FormInput type="text" label="Name" name="Name" placeholder="John Doe" />
   <FormInput type="email" label="Email" name="Email" placeholder="hello@example.com" />
-  <FormSelect label="How Did You Hear About Us?" options={selectOptions} />
+  <FormSelect label="How Did You Hear About Us?" name="HowDidYouHearAboutUs" options={selectOptions} />
   <FormTextarea label="Message" name="Message" placeholder="Your message here..." />
   <Button>Submit</Button>
 </form>
