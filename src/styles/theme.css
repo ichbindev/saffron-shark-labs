@@ -40,12 +40,13 @@
 [data-theme='default'] {
 	color-scheme: light;
 	/* Theme Colors */
-	--theme-primary: #e38a20;
-	--theme-primary-hover: #eb870f;
+	--theme-primary: #f2a123;
+	--theme-primary-hover: #e7a518;
 	--theme-on-primary: #fff;
 
-	--theme-bg: #fff;
-	--theme-on-bg: #000;
+  --theme-on-bg: #f4e8c5;
+  --theme-on-bg: #1987b6;
+
 
 	--theme-surface-1: #f2f2f2;
 	--theme-on-surface-1: #000;
@@ -74,12 +75,12 @@
 [data-theme='dark'] {
 	color-scheme: dark;
 	/* Theme Colors */
-	--theme-primary: #e38a20;
-	--theme-primary-hover: #eb870f;
+	--theme-primary: #f2a123;
+	--theme-primary-hover: #e7a518;
 	--theme-on-primary: #fff;
 
-	--theme-bg: hsl(0, 0%, 2%);
-	--theme-on-bg: hsl(0, 0%, 100%);
+	--theme-bg: #1987b6;
+	--theme-on-bg: #f4e8c5;
 
 	--theme-surface-1: hsl(0, 0%, 20%);
 	--theme-on-surface-1: hsl(0, 0%, 100%);
