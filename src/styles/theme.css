@@ -42,13 +42,13 @@
 	/* Theme Colors */
 	--theme-primary: #f2a123;
 	--theme-primary-hover: #e7a518;
-	--theme-on-primary: #fff;
+	--theme-on-primary: #f4e8c5;
 
-  --theme-on-bg: #f4e8c5;
+  --theme-bg: #f4e8c5;
   --theme-on-bg: #1987b6;
 
 
-	--theme-surface-1: #f2f2f2;
+	--theme-surface-1: #1987b6;
 	--theme-on-surface-1: #000;
 
 	--theme-surface-2: #cce6d0;
