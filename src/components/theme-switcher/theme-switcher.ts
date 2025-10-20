@@ -63,15 +63,15 @@ export class ThemeSwitcher extends LitElement {
 				border: 2px solid var(--theme-primary);
 			}
 			.theme-switcher__container {
-				margin: 2rem 0;
+				margin: 1rem 0;
 				display: grid;
 				grid-template-columns: repeat(5, 1fr);
 			}
 			.theme-select__container {
 				display: flex;
 				flex-direction: column;
-				align-items: center;
-				justify-content: center;
+				align-items: flex-start;
+				justify-content: start;
 			}
 			.theme-select__container p {
 				font-size: var(--font-size-sm);
@@ -110,10 +110,10 @@ export class ThemeSwitcher extends LitElement {
 
     const _heroImage = document.querySelector('#home-hero-image') as HTMLImageElement;
 		if (theme === 'default') {
-			_heroImage.src = '/assets/images/home/classic-hero.jpg';
+			_heroImage.src = '/assets/images/home/day.png';
 		}
 		if (theme === 'dark') {
-			_heroImage.src = '/assets/images/home/dark-hero.jpg';
+			_heroImage.src = '/assets/images/home/night.png';
 		}
 		if (theme === 'earth') {
 			_heroImage.src = '/assets/images/home/earth-hero.jpg';

@@ -15,9 +15,9 @@ const { footerSocials, footerLists, copyrightName, background, color, showPlug: 
   <Container>
     <div class="footer-grid__container">
       <div class="footer-brand__container">
-        <div>
+        <a class="footer-logo__link" href="/">
           <slot name="logo" />
-        </div>
+        </a>
         <ul class="footer-socials__list">
           {
             footerSocials.map((social) => (
@@ -77,6 +77,11 @@ const { footerSocials, footerLists, copyrightName, background, color, showPlug: 
     padding: 10vh 0 1rem 0;
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+  .footer-logo__link {
+    width: fit-content;
+    color: inherit;
+    text-decoration: none;
   }
   .footer-socials__list {
     margin: 1rem 0;

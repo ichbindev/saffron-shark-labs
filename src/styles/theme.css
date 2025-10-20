@@ -82,13 +82,13 @@
 	--theme-bg: #1987b6;
 	--theme-on-bg: #f4e8c5;
 
-	--theme-surface-1: hsl(0, 0%, 20%);
+	--theme-surface-1: hsl(0, 0%,20%);
 	--theme-on-surface-1: hsl(0, 0%, 100%);
 
 	--theme-surface-2: #203422;
 	--theme-on-surface-2: #ffffff;
 
-	--theme-shape-radius: 0;
+	/* --theme-shape-radius: 0; */
 
 	--form-field-input-color: var(--theme-on-bg);
 }
