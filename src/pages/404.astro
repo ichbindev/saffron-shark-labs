@@ -3,16 +3,16 @@ import { Button, Container, TextCardSection } from '@components/odyssey-theme';
 import Layout from '../layouts/Page.astro';
 
 const seo = {
-	title: 'Get Started using the Astro Odyssey Theme',
-	description: 'Get started on how to setup and use this Astro theme.',
+	title: '404 | Saffron Shark Labs',
+	description: 'Software Development and Consulting Services',
 };
 ---
 
 <Layout {seo}>
-	<Container>
+	<Container narrow>
 		<TextCardSection>
-			<h1>404</h1>
-			<h2>Page Not Found 👀</h2>
+			<h1>Go Fish 🎣</h1>
+			<h3>Page Not Found</h2>
 			<div class="cta-buttons__container">
 				<Button href="/">Return Home</Button>
 			</div>
@@ -21,13 +21,16 @@ const seo = {
 </Layout>
 
 <style>
+  h1 {
+    font-size: calc(var(--font-size-xxl) + 10px);
+  }
 	.cta-buttons__container {
 		display: flex;
 		flex-wrap: wrap;
 	}
 	.cta-buttons__container :global(a) {
-		margin-right: 1rem;
-		margin-bottom: 1rem;
+		margin: 1rem;
+		margin-left: 0;
 	}
 	.code-buttons__container {
 		margin: 1rem auto;
