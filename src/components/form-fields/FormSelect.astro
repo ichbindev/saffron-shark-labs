@@ -1,5 +1,5 @@
 ---
-const { label, name, options, required} = Astro.props;
+const { id, label, name, options, required} = Astro.props;
 ---
 
 <style>
@@ -24,8 +24,8 @@ const { label, name, options, required} = Astro.props;
 </style>
 
 <div class="form-field__container">
-  {label && <label for={name}>{label}</label>}
-  <select name={name} required={required}>
+  {label && <label for={id}>{label}</label>}
+  <select name={name} id={id} required={required}>
     <option disabled selected value="">Select an option</option>
     {options?.map((option) => (
       <option value={option}>{option}</option>

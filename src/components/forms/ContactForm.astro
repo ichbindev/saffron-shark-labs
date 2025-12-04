@@ -10,10 +10,11 @@ const selectOptions = [
 ---
 
 <form name="Contact Form" method="POST" action="https://www.formbackend.com/f/a87d3fbfb9e67690">
-  <FormInput type="text" label="Name" name="Name" placeholder="John Doe" />
-  <FormInput type="email" label="Email" name="Email" placeholder="hello@example.com" />
-  <FormSelect label="How Did You Hear About Us?" name="HowDidYouHearAboutUs" options={selectOptions} />
-  <FormTextarea label="Message" name="Message" placeholder="Your message here..." />
+  <FormInput type="text" label="Username" id="Username" name="Username" autocomplete="username" placeholder="JohnDoe69" />
+  <FormInput type="text" label="Name" name="Name" id="Name" autocomplete="name" placeholder="John Doe" />
+  <FormInput type="email" label="Email" name="Email" id="Email" autocomplete="email" placeholder="hello@example.com" />
+  <FormSelect label="How Did You Hear About Us?" name="HowDidYouHearAboutUs" id="HowDidYouHearAboutUs" options={selectOptions} />
+  <FormTextarea label="Message" name="Message" id="Message" placeholder="Your message here..." />
   <Button>Submit</Button>
 </form>
 
@@ -23,4 +24,12 @@ const selectOptions = [
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+
+  :global(label[for="Username"]) {
+    display: none;
+  }
+  :global(#Username) {
+    display: none;
+  }
+
 </style>
