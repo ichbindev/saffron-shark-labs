@@ -1,3 +1,12 @@
 [build]
   publish = "dist/"
   command = "npm run build"
+
+# @astrojs/sitemap v3 emits sitemap-index.xml instead of the sitemap.xml that
+# v0.1 produced. Anything already pointing at the old URL — Search Console, a
+# crawler's cache — keeps working through this redirect.
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap-index.xml"
+  status = 301
+  force = true
