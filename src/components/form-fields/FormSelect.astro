@@ -1,36 +1,36 @@
 ---
-const { id, label, name, options, required} = Astro.props;
+const { id, label, name, options, required } = Astro.props;
 ---
 
-<style>
-  .form-field__container select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 2px solid var(--form-field-border-color, #ccc);
-    color: gray;
-    border-radius: var(--form-field-border-radius, 0.25rem);
-    outline-style: none;
-    font-size: 1rem;
-    font-family: inherit;
-    /* Fixes gloss effect on select dropdowns in Safari */
-    -webkit-appearance: none;
-  }
-  .form-field__container select:valid {
-    color: var(--form-field-input-color, #000000);
-  }
-  .form-field__container select:focus {
-    border: 2px solid var(--form-field-border-focus-color, #000);
-  }
-</style>
-
 <div class="form-field__container">
-  {label && <label for={id}>{label}</label>}
-  <select name={name} id={id} required={required}>
-    <option disabled selected value="">Select an option</option>
-    {options?.map((option) => (
-      <option value={option}>{option}</option>
-    ))}
-  </select>
+	{label && <label for={id}>{label}</label>}
+	<select name={name} id={id} required={required}>
+		<option disabled selected value="">Select an option</option>
+		{options?.map(option => <option value={option}>{option}</option>)}
+	</select>
 </div>
-
-
+<style>
+	.form-field__container select {
+		width: 100%;
+		padding: 0.5rem;
+		border: 2px solid var(--form-field-border-color, #ccc);
+		color: var(--form-field-placeholder-color, gray);
+		border-radius: var(--form-field-border-radius, 0.25rem);
+		outline-style: none;
+		font-size: 1rem;
+		font-family: inherit;
+		/*
+		 * Fixes the gloss effect on select dropdowns in Safari — but it also drops
+		 * the UA styling that gives the other fields their background under
+		 * `color-scheme: dark`, so the background has to be set explicitly here.
+		 */
+		-webkit-appearance: none;
+		background-color: var(--form-field-bg, #fff);
+	}
+	.form-field__container select:valid {
+		color: var(--form-field-input-color, #000000);
+	}
+	.form-field__container select:focus {
+		border: 2px solid var(--form-field-border-focus-color, #000);
+	}
+</style>

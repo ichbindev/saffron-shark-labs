@@ -2,14 +2,17 @@
 import { Container } from '@components/odyssey-theme';
 
 const { reversed } = Astro.props;
+
+const classList = [
+	'text-and-image__section',
+	reversed && 'text-and-image__section--reversed',
+]
+	.filter(Boolean)
+	.join(' ');
 ---
 
 <Container>
-	<section
-		class={`text-and-image__section ${
-			reversed && `text-and-image__section--reversed`
-		}`}
-	>
+	<section class={classList}>
 		<div class="text-and-image__text">
 			<slot name="text-container" />
 			<div class="text-and-image__btns">

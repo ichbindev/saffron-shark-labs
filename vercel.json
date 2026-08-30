@@ -1,0 +1,10 @@
+{
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"redirects": [
+		{
+			"source": "/sitemap.xml",
+			"destination": "/sitemap-index.xml",
+			"permanent": true
+		}
+	]
+}

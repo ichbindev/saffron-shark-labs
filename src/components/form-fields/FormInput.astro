@@ -1,26 +1,45 @@
 ---
-
-const {type = "text", autocomplete, id, label, name, placeholder, required} = Astro.props;
+const {
+	type = 'text',
+	autocomplete,
+	id,
+	label,
+	name,
+	placeholder,
+	required,
+} = Astro.props;
 ---
 
 <div class="form-field__container">
-  {label && <label for={id}>{label}</label>}
-  <input type={type} name={name} id={id} autocomplete={autocomplete} placeholder={placeholder} required={required}/>
+	{label && <label for={id}>{label}</label>}
+	<input
+		type={type}
+		name={name}
+		id={id}
+		autocomplete={autocomplete}
+		placeholder={placeholder}
+		required={required}
+	/>
 </div>
 
 <style>
-  .form-field__container input[type="text"],
-  .form-field__container input[type="email"],
-  .form-field__container input[type="date"],
-  .form-field__container input[type="tel"] {
-    width: 100%;
-    padding: 0.5rem;
-    border: 2px solid var(--form-field-border-color, #ccc);
-    color: var(--form-field-input-color, #000000);
-    border-radius: var(--form-field-border-radius, 0.25rem);
-    outline-style: none;
-  }
-  .form-field__container input:focus {
-    border: 2px solid var(--form-field-border-focus-color, #000);
-  }
+	.form-field__container input[type='text'],
+	.form-field__container input[type='email'],
+	.form-field__container input[type='date'],
+	.form-field__container input[type='tel'] {
+		width: 100%;
+		padding: 0.5rem;
+		border: 2px solid var(--form-field-border-color, #ccc);
+		color: var(--form-field-input-color, #000000);
+		background-color: var(--form-field-bg, #fff);
+		border-radius: var(--form-field-border-radius, 0.25rem);
+		outline-style: none;
+	}
+	.form-field__container input::placeholder {
+		color: var(--form-field-placeholder-color, gray);
+		opacity: 0.75;
+	}
+	.form-field__container input:focus {
+		border: 2px solid var(--form-field-border-focus-color, #000);
+	}
 </style>

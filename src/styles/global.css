@@ -11,11 +11,11 @@ body {
 }
 
 pre {
-  padding: 1em;
-  border-radius: 0.5em;
-  overflow: auto;
+	padding: 1em;
+	border-radius: 0.5em;
+	overflow: auto;
 }
 
 pre .language-id {
-  display: none;
+	display: none;
 }

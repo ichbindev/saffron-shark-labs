@@ -13,14 +13,14 @@ export default {
 	url: `https://saffronsharklabs.com`, // No trailing slash!
 	name: `Saffron Shark Labs`,
 	enableThemeSwitcher: true,
-	showPlug: true,
 };
 ```
 
 - `title` / `description` are the fallbacks `BaseHead.astro` uses when a page passes no `seo`.
-- `url` has **no trailing slash**. Note that `site` in `astro.config.mjs` *does* have one, and that is the value canonical URLs and the sitemap are actually built from. Changing the domain means changing both.
+- `url` has **no trailing slash**, and `test/unit/config.test.js` enforces that. Note that `site` in `astro.config.mjs` _does_ have one, and that is the value canonical URLs and the sitemap are actually built from. Changing the domain means changing both.
 - `enableThemeSwitcher` gates whether `ThemeProvider` renders.
-- `showPlug` controls the footer's "Get This Template" link back to the upstream Odyssey theme. It is currently `true`. Turning it off is a content decision — ask before flipping it.
+
+Every setting here has to be read by something. `showPlug` used to live in this file and controlled nothing — the footer's only use of it was commented out — so it and the `Plug.astro` component it gated were both removed.
 
 ### `nav.js` — named export `nav`
 
@@ -37,7 +37,7 @@ Both configs are consumed in `Page.astro` and passed down as props — component
 Use `astro-icon`, not inline SVG:
 
 ```astro
-import { Icon } from 'astro-icon/components';
+import {Icon} from 'astro-icon/components';
 
 <Icon name="ic:baseline-chevron-right" />
 <Icon name="mdi:github" width={24} height={24} />
@@ -45,24 +45,52 @@ import { Icon } from 'astro-icon/components';
 
 Only the `ic` and `mdi` icon sets are installed. Using a name from another set means adding an `@iconify-json/*` devDependency — check whether an equivalent already exists in `ic` or `mdi` first.
 
-`src/icons/icons.js` holds hand-pasted SVG strings for Twitter, YouTube, GitHub, and Instagram, left over from the theme. Nothing imports it. Do not add to it; use `<Icon>`.
+The Lit theme switcher imports its own SVG strings from `src/components/theme-switcher/icons.ts`, because a custom element's shadow DOM cannot use the Astro component. That file is the only place a hand-pasted SVG belongs. (`src/icons/icons.js` held four more, imported by nothing, and was deleted.)
 
-The Lit theme switcher imports its own SVG strings from `src/components/theme-switcher/icons.ts` because a custom element's shadow DOM can't use the Astro component. That one stays.
+Pass icon dimensions as numbers (`width={24}`), not strings (`width="24px"`) — `astro-icon` types them as numbers, and `npm run typecheck` fails on the string form.
+
+## Images: `src/assets/`, not `public/`
+
+**Every content image goes in `src/assets/`, is imported, and is rendered through `astro:assets`.** Astro re-encodes it to webp at build time, at the width you ask for, and emits a content-hashed filename that can be cached forever. The four images this site uses were 3.7MB of jpeg/png in `public/`; the same images now ship as 347kB — the logo alone went from 431kB to 3kB.
+
+```astro
+---
+import { Image } from 'astro:assets';
+import aboutImage from '../../assets/images/about/about.jpeg';
+---
+
+<Image src={aboutImage} alt="…" width={1200} format="webp" loading="eager" />
+```
+
+An image referenced by path from `public/` skips all of that, so `test/build/output.test.ts` fails if any `<img>` on a built page has a `src` outside `/_astro/`.
+
+- **Always pass `width`.** The sources are 2400px squares; 1200 is already 2× the largest display size on this site. Without it Astro emits the image at full size.
+- **Let the component set `width`/`height` on the tag.** They are the intrinsic dimensions and they are what stops the page reflowing as the image loads; a build test enforces that both are present.
+- **`loading="eager"` / `fetchpriority="high"` on above-the-fold heroes.** They are the largest contentful paint; lazy-loading them makes the page slower, not faster.
+- **Every image needs real `alt` text**, and if a variant swaps in at runtime it needs its own.
+
+The home hero has two variants that follow the theme. Because `astro:assets` hashes the output filenames, `theme-switcher.ts` cannot know them — `index.astro` calls `getImage()` for both and passes the results on a `data-theme-variants` attribute, which the switcher reads. Do not reintroduce hardcoded image paths in the switcher.
 
 ## `public/`
 
-Served verbatim at the site root — `public/assets/images/logo.png` is `/assets/images/logo.png`. Reference these with plain absolute-path strings; they are not imported or processed.
+Served verbatim at the site root and **never processed**. Only three kinds of file belong here:
 
 - `public/assets/fonts/` — Lato and Roboto Serif, self-hosted as `.woff2` + `.woff`, declared in `src/styles/typography.css` with `font-display: swap`. Self-hosting is deliberate: no Google Fonts request at runtime. Adding a weight means adding both file formats and an `@font-face` block.
-- `public/assets/images/` — page imagery, organized by page (`home/`, `about/`).
-- `public/favicon.png`, `public/social.png` — favicon and the default Open Graph card.
-
-**Image discipline.** Hero images are full-bleed and are the heaviest thing on the page; they have already been re-encoded once to shrink them. Resize and compress before committing, and give every `<img>` a real `alt`. `astro:assets` is not in use — images are plain `<img>` tags inside `<picture>` — so nothing optimizes them for you at build time.
+- `public/favicon.png` — referenced by a literal `<link rel="icon">` path.
+- `public/social.png` — the default Open Graph card. It has to stay at a stable, unhashed URL because it is resolved against `Astro.site` and handed to crawlers.
 
 `assets/` at the repo root (not `public/assets/`) holds two README badge SVGs from the upstream theme and is not part of the site.
 
+`test/build/output.test.ts` fails if a built page references an image or font that is not in `dist/`, so a typo'd path is caught in CI rather than in production.
+
 ## Build and deploy
 
-`netlify.toml` is the whole deploy config: publish `dist/`, command `npm run build`. Branch and environment settings live in the Netlify dashboard, not in the repo. `@astrojs/sitemap` generates `dist/sitemap.xml` from `site` in `astro.config.mjs`.
+**Production is served by Vercel** — `curl -I https://saffronsharklabs.com` answers `server: Vercel`. `vercel.json` is therefore the deploy config that actually takes effect; Vercel detects Astro and needs no build command in the repo.
+
+`netlify.toml` is also present and configured, but nothing is served from Netlify today. Treat it as inactive: **a redirect or header added only to `netlify.toml` will not reach production.** It is kept in case Netlify is still wanted for previews; if it is not, deleting it removes a file that reads like live config and is not.
+
+`@astrojs/sitemap` v3 emits `sitemap-index.xml` and `sitemap-0.xml`, where the v0.1 this repo used before emitted a single `sitemap.xml`. Both host configs redirect the old URL to the new index so anything already pointing at it keeps working — Search Console submissions, crawler caches. **If you resubmit the sitemap to Search Console, submit `/sitemap-index.xml`.**
+
+Node is pinned to >=22.12 in `engines` (Astro 7's minimum), with `.nvmrc` for local and Netlify use; CI runs Node 22. `@astrojs/sitemap` generates `dist/sitemap.xml` from `site` in `astro.config.mjs`.
 
 `dist/` and `node_modules/` are gitignored. `.astro/` is partly tracked (`settings.json`, `types.d.ts`) with `icon.d.ts` ignored — leave that arrangement alone.
