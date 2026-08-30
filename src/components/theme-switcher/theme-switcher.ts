@@ -1,41 +1,29 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import {
-	classicThemeIcon,
-	darkThemeIcon,
-	earthThemeIcon,
-	blueThemeIcon,
-	orangeThemeIcon,
-} from './icons';
+import { classicThemeIcon, darkThemeIcon } from './icons';
 
 const themes = [
-  {
-    name: 'default',
-    icon: classicThemeIcon,
-    label: 'Light',
-  },
-  {
-    name: 'dark',
-    icon: darkThemeIcon,
-    label: 'Dark',
-  },
-  // {
-  //   name: 'earth',
-  //   icon: earthThemeIcon,
-  //   label: 'Earth',
-  // },
-  // {
-  //   name: 'ocean',
-  //   icon: blueThemeIcon,
-  //   label: 'Ocean',
-  // },
-  // {
-  //   name: 'sand',
-  //   icon: orangeThemeIcon,
-  //   label: 'Sand',
-  // }
-]
+	{
+		name: 'default',
+		icon: classicThemeIcon,
+		label: 'Light',
+	},
+	{
+		name: 'dark',
+		icon: darkThemeIcon,
+		label: 'Dark',
+	},
+];
+
+/*
+ * Home-page hero art per theme. A theme with no entry here simply leaves the
+ * hero alone, so adding a theme never has to touch this map.
+ */
+const heroImages: Record<string, string> = {
+	default: '/assets/images/home/day.jpeg',
+	dark: '/assets/images/home/night.jpeg',
+};
 
 @customElement('theme-switcher')
 export class ThemeSwitcher extends LitElement {
@@ -57,7 +45,7 @@ export class ThemeSwitcher extends LitElement {
 			}
 			button[active] {
 				border: 2px solid var(--theme-primary);
-        box-shadow: 0 0 12px 1px var(--theme-primary);
+				box-shadow: 0 0 12px 1px var(--theme-primary);
 			}
 			button:hover {
 				border: 2px solid var(--theme-primary);
@@ -86,68 +74,61 @@ export class ThemeSwitcher extends LitElement {
 	theme: string | null = null;
 
 	private _getCurrentTheme() {
-		// check for a local storage theme first
-		const localStorageTheme = localStorage.getItem('theme');
-		if (localStorageTheme !== null) {
-			this._setTheme(localStorageTheme);
-		} else {
-    	// Set default theme to dark if the operating system specifies this preference
-			if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-				this._setTheme('dark');
-			} else{ // Set to default/light theme if no specification, or light theme is specified
-				this._setTheme('default');
-			}
-    		
-    }
+		// A stored choice wins; otherwise follow the operating system preference.
+		const storedTheme = localStorage.getItem('theme');
+		if (storedTheme !== null) {
+			this._setTheme(storedTheme);
+			return;
+		}
+
+		const prefersDark = window.matchMedia?.(
+			'(prefers-color-scheme: dark)',
+		).matches;
+		this._setTheme(prefersDark ? 'dark' : 'default');
 	}
 
-  firstUpdated() {
-    this._getCurrentTheme();
-  }
+	firstUpdated() {
+		this._getCurrentTheme();
+	}
 
-	private _setTheme(theme) {
+	private _setTheme(theme: string) {
 		this._doc.setAttribute('data-theme', theme);
-
-    const _heroImage = document.querySelector('#home-hero-image') as HTMLImageElement;
-		if (theme === 'default') {
-			_heroImage.src = '/assets/images/home/day.jpeg';
-		}
-		if (theme === 'dark') {
-			_heroImage.src = '/assets/images/home/night.jpeg';
-		}
-		if (theme === 'earth') {
-			_heroImage.src = '/assets/images/home/earth-hero.jpg';
-		}
-		if (theme === 'ocean') {
-			_heroImage.src = '/assets/images/home/ocean-hero.jpg';
-		}
-		if (theme === 'sand') {
-			_heroImage.src = '/assets/images/home/sand-hero.jpg';
-		}
+		this._setHeroImage(theme);
 		localStorage.setItem('theme', theme);
 		this.theme = theme;
 	}
 
-	render() {
-    const themeButtons = html`${themes.map((theme) => {
-      return html`
-      <div class="theme-select__container">
-        <button
-          @click=${() => this._setTheme(theme.name)}
-          ?active=${this.theme === theme.name}
-          title=${`Enable ${theme.label} Theme`}
-        >
-          ${theme.icon}
-        </button>
-        <p>${theme.label}</p>
-        </div>
-      `
-    })}`
+	/*
+	 * The home page swaps its hero to match the theme. Every other page has no
+	 * #home-hero-image, so this must tolerate the element being absent — without
+	 * the guard, _setTheme throws before it can persist the choice.
+	 */
+	private _setHeroImage(theme: string) {
+		const heroImage = document.querySelector(
+			'#home-hero-image',
+		) as HTMLImageElement | null;
+		if (!heroImage) return;
 
-		return html`
-			<div class="theme-switcher__container">
-				${themeButtons}
-			</div>
-		`;
+		const src = heroImages[theme];
+		if (src) heroImage.src = src;
+	}
+
+	render() {
+		const themeButtons = html`${themes.map(theme => {
+			return html`
+				<div class="theme-select__container">
+					<button
+						@click=${() => this._setTheme(theme.name)}
+						?active=${this.theme === theme.name}
+						title=${`Enable ${theme.label} Theme`}
+					>
+						${theme.icon}
+					</button>
+					<p>${theme.label}</p>
+				</div>
+			`;
+		})}`;
+
+		return html` <div class="theme-switcher__container">${themeButtons}</div> `;
 	}
 }

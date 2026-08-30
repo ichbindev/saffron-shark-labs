@@ -2,7 +2,6 @@
 import { Icon } from 'astro-icon/components';
 import { Button } from '@components/odyssey-theme';
 import Layout from '../layouts/Page.astro';
-// import CtaCardSection from '../components/sections/CtaCardSection.astro';
 import TextAndImageHero from '../components/sections/heros/TextAndImageHero.astro';
 
 const seo = {
@@ -15,7 +14,10 @@ const seo = {
 	<TextAndImageHero reversed>
 		<div slot="text-container">
 			<h1>Saffron Shark Labs</h1>
-			<p>Need help getting your startup off the ground? We provide expert guidance and innovative solutions to turn your ideas into reality.</p>
+			<p>
+				Need help getting your startup off the ground? We provide expert
+				guidance and innovative solutions to turn your ideas into reality.
+			</p>
 		</div>
 		<div slot="btns-container">
 			<Button href="/company/contact" customIcon
@@ -25,27 +27,11 @@ const seo = {
 			>
 		</div>
 		<picture slot="image-container">
-        <img
-          src="/assets/images/home/day.jpeg"
-          alt="Swimming shark in the daytime"
-          id="home-hero-image"
-        />
+			<img
+				src="/assets/images/home/day.jpeg"
+				alt="Swimming shark in the daytime"
+				id="home-hero-image"
+			/>
 		</picture>
 	</TextAndImageHero>
-  <!-- <CtaCardSection
-		background="var(--theme-surface-2)"
-		color="var(--theme-on-surface-2)"
-	>
-		<h2>Get a quote</h2>
-		<p>
-			It only takes a couple clicks to have a new, modern website for your
-			business or startup.
-		</p>
-		<Button href="/company/contact" customIcon>
-      Get Started 
-      <Fragment slot="icon">
-				<Icon name="ic:baseline-chevron-right" />
-			</Fragment>
-    </Button>
-	</CtaCardSection> -->
 </Layout>

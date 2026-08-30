@@ -1,12 +1,22 @@
 ---
+
 ---
 
-<!-- This is a simple script to check if there is a theme value in local storage. That way the theme stays with you between pages -->
+<!--
+  Runs before first paint so the page never flashes the wrong palette.
+  Mirrors the fallback logic in theme-switcher.ts: stored choice first,
+  then the OS preference. Must stay `is:inline` so it is not bundled
+  and deferred.
+-->
 <script is:inline>
 	const doc = document.firstElementChild;
-	const localStorageTheme = localStorage.getItem('theme');
+	const storedTheme = localStorage.getItem('theme');
+	const prefersDark =
+		window.matchMedia &&
+		window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-	if (localStorageTheme !== null) {
-		doc.setAttribute('data-theme', localStorageTheme);
-	}
+	doc.setAttribute(
+		'data-theme',
+		storedTheme ?? (prefersDark ? 'dark' : 'default'),
+	);
 </script>

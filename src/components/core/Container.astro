@@ -1,21 +1,29 @@
 ---
 const { narrow, left } = Astro.props;
+
+const classList = [
+	'content__container',
+	narrow && 'content__container--narrow',
+	left && 'content__container--left',
+]
+	.filter(Boolean)
+	.join(' ');
 ---
 
-<div class={`content__container ${narrow ? `content__container--narrow` : ``} ${left ? `content__container--left` : ``}`}>
-  <slot></slot>
+<div class={classList}>
+	<slot />
 </div>
 
 <style>
-  .content__container {
-    margin: 0 auto;
-    max-width: var(--container-max-width);
-    padding: var(--container-padding);
-  }
-  .content__container--narrow {
-    max-width: var(--container-max-width-narrow);
-  }
-  .content__container--left {
-    margin-left: auto;
-  }
+	.content__container {
+		margin: 0 auto;
+		max-width: var(--container-max-width);
+		padding: var(--container-padding);
+	}
+	.content__container--narrow {
+		max-width: var(--container-max-width-narrow);
+	}
+	.content__container--left {
+		margin-left: auto;
+	}
 </style>

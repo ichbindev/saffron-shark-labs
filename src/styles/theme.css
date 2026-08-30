@@ -1,14 +1,23 @@
+/*
+ * Design tokens.
+ *
+ * :root holds every token and doubles as the light-theme palette, so the page
+ * renders correctly before any JS runs and for visitors with JS disabled.
+ * Each [data-theme] block overrides colors only — layout, shape, motion and
+ * font tokens are inherited from :root and must not be repeated here.
+ */
+
 :root {
-	/* Theme Colors */
-	--theme-primary: #e38a20;
-	--theme-primary-hover: #eb870f;
-	--theme-on-primary: #fff;
+	/* Theme Colors — same palette as [data-theme='default'] */
+	--theme-primary: #f2a123;
+	--theme-primary-hover: #e7a518;
+	--theme-on-primary: #f4e8c5;
 
-	--theme-bg: #fff;
-	--theme-on-bg: #000;
+	--theme-bg: #f4e8c5;
+	--theme-on-bg: #1987b6;
 
-	--theme-surface-1: #f2f2f2;
-	--theme-on-surface-1: #000;
+	--theme-surface-1: #1987b6;
+	--theme-on-surface-1: #f4e8c5;
 
 	--theme-surface-2: #cce6d0;
 	--theme-on-surface-2: #000;
@@ -27,54 +36,44 @@
 	--container-max-width: 1440px;
 	--container-max-width-narrow: 960px;
 	--container-padding: 0 1rem;
+	/* Height of the site header. Heroes subtract this from 100vh. */
+	--navbar-height: 5.25rem;
 
-	--theme-blog-post-header-width: 1200px;
+	/* Form Fields */
+	--form-field-border-color: var(--theme-on-bg);
+	--form-field-border-focus-color: var(--theme-primary);
+	--form-field-border-radius: 0.5rem;
+	--form-field-input-color: var(--theme-on-bg);
+	--form-field-placeholder-color: var(--theme-on-bg);
+	--form-field-bg: var(--theme-bg);
 
 	/* Theme Fonts */
-	--theme-font-family-serif: 'Roboto Serif', Georgia, Cambria, 'Times New Roman',
-		Times, serif;
-	--theme-font-family-sans: 'Lato', -apple-system, BlinkMacSystemFont,
-		sans-serif;
+	--theme-font-family-serif:
+		'Roboto Serif', Georgia, Cambria, 'Times New Roman', Times, serif;
+	--theme-font-family-sans:
+		'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 [data-theme='default'] {
 	color-scheme: light;
-	/* Theme Colors */
+
 	--theme-primary: #f2a123;
 	--theme-primary-hover: #e7a518;
 	--theme-on-primary: #f4e8c5;
 
-  --theme-bg: #f4e8c5;
-  --theme-on-bg: #1987b6;
-
+	--theme-bg: #f4e8c5;
+	--theme-on-bg: #1987b6;
 
 	--theme-surface-1: #1987b6;
 	--theme-on-surface-1: #f4e8c5;
 
 	--theme-surface-2: #cce6d0;
 	--theme-on-surface-2: #000;
-
-	/* Theme Shape */
-	/* Set this to 0 if you want all of the rounded cards, images, etc to be straight edges */
-	--theme-shape-radius: clamp(1rem, 2rem, 3rem);
-	--theme-button-border-radius: 3rem;
-
-	/* Theme Transition */
-	--theme-transition: 0.2s ease-in-out;
-
-	/* Theme Layout */
-	--section-margin: 3rem;
-	--theme-grid-gap: 1rem;
-	--container-max-width: 1440px;
-	--container-max-width-narrow: 960px;
-	--container-padding: 0 1rem;
-
-	--theme-blog-post-header-width: 1200px;
 }
 
 [data-theme='dark'] {
 	color-scheme: dark;
-	/* Theme Colors */
+
 	--theme-primary: #f2a123;
 	--theme-primary-hover: #e7a518;
 	--theme-on-primary: #f4e8c5;
@@ -87,62 +86,4 @@
 
 	--theme-surface-2: hsl(0, 0%, 25%);
 	--theme-on-surface-2: #f4e8c5;
-
-	/* --theme-shape-radius: 0; */
-
-	--form-field-input-color: var(--theme-on-bg);
-}
-
-[data-theme='earth'] {
-	/* Theme Colors */
-	--theme-primary: #2c3e2d;
-	--theme-primary-hover: #395a3b;
-	--theme-on-primary: hsl(0, 0%, 100%);
-
-	--theme-bg: #eeeff1;
-	--theme-on-bg: #272f27;
-
-	--theme-surface-1: #e6e4e0;
-	--theme-on-surface-1: #272f27;
-
-	--theme-surface-2: #c3d9c4;
-	--theme-on-surface-2: #000;
-
-	--theme-button-border-radius: 0.5rem;
-}
-
-[data-theme='ocean'] {
-	/* Theme Colors */
-	/* Theme Colors */
-	--theme-primary: #1556ac;
-	--theme-primary-hover: #2569c3;
-	--theme-on-primary: hsl(0, 0%, 100%);
-
-	--theme-bg: #fafafa;
-	--theme-on-bg: #0c0d0d;
-
-	--theme-surface-1: #eef1f3;
-	--theme-on-surface-1: #0c0d0d;
-
-	--theme-surface-2: #072650;
-	--theme-on-surface-2: #ffffff;
-}
-
-[data-theme='sand'] {
-	/* Theme Colors */
-	/* Theme Colors */
-	--theme-primary: #e38a20;
-	--theme-primary-hover: #eb870f;
-	--theme-on-primary: hsl(0, 0%, 100%);
-
-	--theme-bg: #fffffe;
-	--theme-on-bg: #5e4536;
-
-	--theme-surface-1: #ffecd9;
-	--theme-on-surface-1: #5e4536;
-
-	--theme-surface-2: #6a4d34;
-	--theme-on-surface-2: #ffffff;
-
-	--theme-button-border-radius: 0.5rem;
 }
