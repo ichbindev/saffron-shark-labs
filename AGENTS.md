@@ -22,6 +22,7 @@ Because the site is small and static, the bar for changes is different from an a
 
 ```bash
 npm install        # Install dependencies (also installs the pre-commit hook)
+                   # Needs Node >=22.12 — see `engines` and `.nvmrc`
 npm run dev        # Dev server (localhost:4321)
 npm run build      # Production build to dist/
 npm run preview    # Serve the built dist/ locally (localhost:4322)

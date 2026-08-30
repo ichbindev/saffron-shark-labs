@@ -7,6 +7,9 @@
 		"type": "git",
 		"url": "git@github.com:ichbindev/saffron-shark-labs.git"
 	},
+	"engines": {
+		"node": ">=22.12.0"
+	},
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",

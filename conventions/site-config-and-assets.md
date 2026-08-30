@@ -85,8 +85,12 @@ Served verbatim at the site root and **never processed**. Only three kinds of fi
 
 ## Build and deploy
 
-`netlify.toml` holds the deploy config — publish `dist/`, command `npm run build` — plus one redirect. Branch and environment settings live in the Netlify dashboard, not in the repo.
+**Production is served by Vercel** — `curl -I https://saffronsharklabs.com` answers `server: Vercel`. `vercel.json` is therefore the deploy config that actually takes effect; Vercel detects Astro and needs no build command in the repo.
 
-`@astrojs/sitemap` v3 emits `sitemap-index.xml` and `sitemap-0.xml`, where the v0.1 the repo used before emitted a single `sitemap.xml`. The redirect in `netlify.toml` keeps the old `/sitemap.xml` URL working for anything already pointing at it — Search Console submissions, crawler caches. **If you resubmit the sitemap to Search Console, submit `/sitemap-index.xml`.** `@astrojs/sitemap` generates `dist/sitemap.xml` from `site` in `astro.config.mjs`.
+`netlify.toml` is also present and configured, but nothing is served from Netlify today. Treat it as inactive: **a redirect or header added only to `netlify.toml` will not reach production.** It is kept in case Netlify is still wanted for previews; if it is not, deleting it removes a file that reads like live config and is not.
+
+`@astrojs/sitemap` v3 emits `sitemap-index.xml` and `sitemap-0.xml`, where the v0.1 this repo used before emitted a single `sitemap.xml`. Both host configs redirect the old URL to the new index so anything already pointing at it keeps working — Search Console submissions, crawler caches. **If you resubmit the sitemap to Search Console, submit `/sitemap-index.xml`.**
+
+Node is pinned to >=22.12 in `engines` (Astro 7's minimum), with `.nvmrc` for local and Netlify use; CI runs Node 22. `@astrojs/sitemap` generates `dist/sitemap.xml` from `site` in `astro.config.mjs`.
 
 `dist/` and `node_modules/` are gitignored. `.astro/` is partly tracked (`settings.json`, `types.d.ts`) with `icon.d.ts` ignored — leave that arrangement alone.
