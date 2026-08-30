@@ -4,15 +4,15 @@ How components are written and wired together in `src/components/`.
 
 ## Where a component goes
 
-| Kind                                        | Location                        |
-| ------------------------------------------- | ------------------------------- |
-| Site chrome (header, footer, container)      | `src/components/core/`          |
-| A full-width block a page composes           | `src/components/sections/`      |
-| A hero variant                               | `src/components/sections/heros/`|
-| A single form control                        | `src/components/form-fields/`   |
-| An assembled form                            | `src/components/forms/`         |
-| A card                                       | `src/components/cards/`         |
-| A button                                     | `src/components/buttons/`       |
+| Kind                                         | Location                              |
+| -------------------------------------------- | ------------------------------------- |
+| Site chrome (header, footer, container)      | `src/components/core/`                |
+| A full-width block a page composes           | `src/components/sections/`            |
+| A hero variant                               | `src/components/sections/heros/`      |
+| A single form control                        | `src/components/form-fields/`         |
+| An assembled form                            | `src/components/forms/`               |
+| A card                                       | `src/components/cards/`               |
+| A button                                     | `src/components/buttons/`             |
 | Anything genuinely one-off and site-specific | `src/components/` root (`Logo.astro`) |
 
 Prefer adding a variant prop to an existing section over creating a near-duplicate file. The repo already carries unused theme components; don't grow that pile.
@@ -26,7 +26,7 @@ export { default as Container } from './core/Container.astro';
 ```
 
 - If a component is in the barrel, import it from `@components/odyssey-theme`.
-- If it is not (the hero sections, `ContactForm`, `Logo`, `BaseHead`, `Nav`), import it by relative path — that is how `index.astro` and `about.astro` already do it.
+- If it is not (the hero sections, `ContactForm`, `Logo`, `BaseHead`), import it by relative path — that is how `index.astro` and `about.astro` already do it.
 - Add a component to the barrel only when it is reusable site chrome. Page-specific and site-specific components stay out of it.
 
 ## Frontmatter
@@ -35,7 +35,15 @@ Destructure props on one line at the top, with defaults inline:
 
 ```astro
 ---
-const { type = 'text', autocomplete, id, label, name, placeholder, required } = Astro.props;
+const {
+	type = 'text',
+	autocomplete,
+	id,
+	label,
+	name,
+	placeholder,
+	required,
+} = Astro.props;
 ---
 ```
 
@@ -47,10 +55,10 @@ Content goes in through slots so pages can put real markup there. Named slots fo
 
 ```astro
 <div class="text-and-image__text">
-  <slot name="text-container" />
-  <div class="text-and-image__btns">
-    <slot name="btns-container" />
-  </div>
+	<slot name="text-container" />
+	<div class="text-and-image__btns">
+		<slot name="btns-container" />
+	</div>
 </div>
 ```
 
@@ -58,10 +66,10 @@ A page then fills them:
 
 ```astro
 <TextAndImageHero reversed>
-  <div slot="text-container">
-    <h1>Saffron Shark Labs</h1>
-  </div>
-  <picture slot="image-container">…</picture>
+	<div slot="text-container">
+		<h1>Saffron Shark Labs</h1>
+	</div>
+	<picture slot="image-container">…</picture>
 </TextAndImageHero>
 ```
 
@@ -69,16 +77,31 @@ Give a slot a fallback child when an empty slot would look broken.
 
 ## Boolean variant props
 
-Variants are bare boolean attributes mapped onto a modifier class, using the `block__element--modifier` naming already in use:
+Variants are bare boolean attributes mapped onto a modifier class, using the `block__element--modifier` naming already in use. **Build the class list as a filtered array, in the frontmatter:**
 
 ```astro
 ---
 const { narrow, left } = Astro.props;
+
+const classList = [
+	'content__container',
+	narrow && 'content__container--narrow',
+	left && 'content__container--left',
+]
+	.filter(Boolean)
+	.join(' ');
 ---
-<div class={`content__container ${narrow ? `content__container--narrow` : ``}`}>
+
+<div class={classList}></div>
 ```
 
-`Button.astro` uses the shorter `${outlined && 'btn--outlined'}` form. Both exist; match the file. Note that the `&&` form writes the literal string `false` into the class list when the prop is absent — harmless, but prefer the ternary in new code.
+Do not interpolate the condition into a template literal. `class={`btn ${outlined && 'btn--outlined'}`}` stringifies an absent prop to the literal text `undefined`; every button on the site shipped as `class="btn undefined undefined undefined"` until this was fixed. The ternary form avoids that but leaves stray whitespace instead. `test/build/output.test.ts` fails the built output if either reappears.
+
+The same rule applies to optional attributes — pass `undefined` so the attribute is omitted, rather than an empty string that renders as `target=""`:
+
+```astro
+target={newTab ? '_blank' : undefined}
+```
 
 ## Polymorphic tags
 

@@ -13,14 +13,14 @@ export default {
 	url: `https://saffronsharklabs.com`, // No trailing slash!
 	name: `Saffron Shark Labs`,
 	enableThemeSwitcher: true,
-	showPlug: true,
 };
 ```
 
 - `title` / `description` are the fallbacks `BaseHead.astro` uses when a page passes no `seo`.
-- `url` has **no trailing slash**. Note that `site` in `astro.config.mjs` *does* have one, and that is the value canonical URLs and the sitemap are actually built from. Changing the domain means changing both.
+- `url` has **no trailing slash**, and `test/unit/config.test.js` enforces that. Note that `site` in `astro.config.mjs` _does_ have one, and that is the value canonical URLs and the sitemap are actually built from. Changing the domain means changing both.
 - `enableThemeSwitcher` gates whether `ThemeProvider` renders.
-- `showPlug` controls the footer's "Get This Template" link back to the upstream Odyssey theme. It is currently `true`. Turning it off is a content decision — ask before flipping it.
+
+Every setting here has to be read by something. `showPlug` used to live in this file and controlled nothing — the footer's only use of it was commented out — so it and the `Plug.astro` component it gated were both removed.
 
 ### `nav.js` — named export `nav`
 
@@ -37,7 +37,7 @@ Both configs are consumed in `Page.astro` and passed down as props — component
 Use `astro-icon`, not inline SVG:
 
 ```astro
-import { Icon } from 'astro-icon/components';
+import {Icon} from 'astro-icon/components';
 
 <Icon name="ic:baseline-chevron-right" />
 <Icon name="mdi:github" width={24} height={24} />
@@ -45,9 +45,9 @@ import { Icon } from 'astro-icon/components';
 
 Only the `ic` and `mdi` icon sets are installed. Using a name from another set means adding an `@iconify-json/*` devDependency — check whether an equivalent already exists in `ic` or `mdi` first.
 
-`src/icons/icons.js` holds hand-pasted SVG strings for Twitter, YouTube, GitHub, and Instagram, left over from the theme. Nothing imports it. Do not add to it; use `<Icon>`.
+The Lit theme switcher imports its own SVG strings from `src/components/theme-switcher/icons.ts`, because a custom element's shadow DOM cannot use the Astro component. That file is the only place a hand-pasted SVG belongs. (`src/icons/icons.js` held four more, imported by nothing, and was deleted.)
 
-The Lit theme switcher imports its own SVG strings from `src/components/theme-switcher/icons.ts` because a custom element's shadow DOM can't use the Astro component. That one stays.
+Pass icon dimensions as numbers (`width={24}`), not strings (`width="24px"`) — `astro-icon` types them as numbers, and `npm run typecheck` fails on the string form.
 
 ## `public/`
 
@@ -60,6 +60,8 @@ Served verbatim at the site root — `public/assets/images/logo.png` is `/assets
 **Image discipline.** Hero images are full-bleed and are the heaviest thing on the page; they have already been re-encoded once to shrink them. Resize and compress before committing, and give every `<img>` a real `alt`. `astro:assets` is not in use — images are plain `<img>` tags inside `<picture>` — so nothing optimizes them for you at build time.
 
 `assets/` at the repo root (not `public/assets/`) holds two README badge SVGs from the upstream theme and is not part of the site.
+
+`test/build/output.test.ts` fails if a built page references an image or font that is not in `dist/`, so a typo'd path is caught in CI rather than in production.
 
 ## Build and deploy
 

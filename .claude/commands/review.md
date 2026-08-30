@@ -27,10 +27,13 @@ Weight these to the change actually in front of you; skip what does not apply.
 - **SEO and head.** A page missing its `seo` const, a title that breaks the `Page Name | Saffron Shark Labs` pattern, a boilerplate description copied from another page, meta tags added to a page instead of `BaseHead.astro`.
 - **Page weight.** Uncompressed or oversized images committed to `public/assets/`. A new font weight without both `.woff2` and `.woff`.
 - **Forms.** Anything that removes, un-hides, or renames the `Username` honeypot field, or renames a field `name` that the form backend records.
-- **Conventions drift.** Components importing config directly instead of receiving props. A near-duplicate section component where a variant prop would do. Wholesale reformatting that buries the real diff. Commented-out markup left behind.
+- **Conventions drift.** Components importing config directly instead of receiving props. A near-duplicate section component where a variant prop would do. Wholesale reformatting that buries the real diff. Commented-out markup left behind. A `<style>` block before the markup instead of after it.
+- **Silently invalid CSS.** A `calc()` referencing an undefined custom property (which voids the whole declaration), a color assigned to a non-color property, a duplicated selector where the second copy wins, a modifier class with no rule behind it.
+- **Class and attribute construction.** `${prop && 'cls'}` inside a template literal ships the text `undefined`; a ternary ships stray whitespace. Both should be a filtered array joined in the frontmatter. Optional attributes should be `undefined`, not `''`.
+- **Test coverage.** A fixed bug with no regression test. A new page missing from the `PAGES` map in `test/build/output.test.ts` or the route list in `test/unit/config.test.js`.
 - **Correctness.** Broken imports, a component used with props it does not accept, a nav or footer entry pointing at a route that does not exist, a new page not added to `src/config/nav.js` when it should be.
 
-Confirm the change builds: `npm run build`.
+Confirm the change passes: `npm run check`, then `npm run build && npm run test:build`.
 
 ## Output
 
