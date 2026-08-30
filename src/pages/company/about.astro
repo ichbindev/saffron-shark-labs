@@ -1,7 +1,9 @@
 ---
+import { Image } from 'astro:assets';
 import { TextSection } from '@components/odyssey-theme';
 import Layout from '../../layouts/Page.astro';
 import HeroSection from '../../components/sections/heros/HeroSection.astro';
+import aboutImage from '../../assets/images/about/about.jpeg';
 
 const seo = {
 	title: 'About | Saffron Shark Labs',
@@ -21,10 +23,14 @@ const seo = {
 			</p>
 		</div>
 		<picture slot="image-container">
-			<img
-				src="/assets/images/about/about.jpeg"
+			<Image
+				src={aboutImage}
 				alt="Shark swimming over fantastical coral clouds"
 				id="about-hero-image"
+				width={1200}
+				format="webp"
+				loading="eager"
+				decoding="async"
 			/>
 		</picture>
 	</HeroSection>

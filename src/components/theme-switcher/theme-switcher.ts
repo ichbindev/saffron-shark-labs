@@ -16,15 +16,6 @@ const themes = [
 	},
 ];
 
-/*
- * Home-page hero art per theme. A theme with no entry here simply leaves the
- * hero alone, so adding a theme never has to touch this map.
- */
-const heroImages: Record<string, string> = {
-	default: '/assets/images/home/day.jpeg',
-	dark: '/assets/images/home/night.jpeg',
-};
-
 @customElement('theme-switcher')
 export class ThemeSwitcher extends LitElement {
 	static styles = [
@@ -99,18 +90,32 @@ export class ThemeSwitcher extends LitElement {
 	}
 
 	/*
-	 * The home page swaps its hero to match the theme. Every other page has no
-	 * #home-hero-image, so this must tolerate the element being absent — without
-	 * the guard, _setTheme throws before it can persist the choice.
+	 * The home page swaps its hero to match the theme. The image URLs are hashed
+	 * at build time by astro:assets, so the page hands them over on a data
+	 * attribute rather than this file hardcoding paths it cannot know.
+	 *
+	 * Every other page has no #home-hero-image, so this must tolerate the element
+	 * being absent — without the guard, _setTheme throws before it can persist
+	 * the choice.
 	 */
 	private _setHeroImage(theme: string) {
 		const heroImage = document.querySelector(
 			'#home-hero-image',
 		) as HTMLImageElement | null;
-		if (!heroImage) return;
+		if (!heroImage?.dataset.themeVariants) return;
 
-		const src = heroImages[theme];
-		if (src) heroImage.src = src;
+		let variants: Record<string, { src: string; alt: string }>;
+		try {
+			variants = JSON.parse(heroImage.dataset.themeVariants);
+		} catch {
+			return;
+		}
+
+		const variant = variants[theme];
+		if (!variant) return;
+
+		heroImage.src = variant.src;
+		heroImage.alt = variant.alt;
 	}
 
 	render() {

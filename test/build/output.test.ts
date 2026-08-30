@@ -148,16 +148,67 @@ describe.each(eachPage)('%s', page => {
 });
 
 describe('site output', () => {
-	it('emits a sitemap listing the public pages', () => {
-		const sitemap = readFileSync(join(DIST, 'sitemap.xml'), 'utf8');
+	// @astrojs/sitemap v3 emits an index plus numbered files, where v0.1 emitted a
+	// single sitemap.xml. netlify.toml redirects the old URL to the new index.
+	it('emits a sitemap index pointing at a sitemap that lists the public pages', () => {
+		const index = readFileSync(join(DIST, 'sitemap-index.xml'), 'utf8');
+		expect(index).toContain('https://saffronsharklabs.com/sitemap-0.xml');
+
+		const sitemap = readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8');
 		for (const path of ['/', '/company/about/', '/company/contact/']) {
 			expect(sitemap).toContain(`https://saffronsharklabs.com${path}`);
 		}
 	});
 
 	it('keeps the 404 page out of the sitemap', () => {
-		const sitemap = readFileSync(join(DIST, 'sitemap.xml'), 'utf8');
-		expect(sitemap).not.toContain('/404');
+		expect(readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8')).not.toContain(
+			'/404',
+		);
+	});
+
+	/*
+	 * Every content image goes through astro:assets, which re-encodes it at build
+	 * time — the four originals were 3.7MB of jpeg/png and come out as 347kB of
+	 * webp. An image dropped into public/ and referenced by path skips all of
+	 * that, so fail if one shows up.
+	 */
+	it('serves every content image as a build-optimized asset', () => {
+		for (const page of eachPage) {
+			for (const img of documents[page].querySelectorAll('img')) {
+				const src = img.getAttribute('src') ?? '';
+				expect(src, `${page} → ${src}`).toMatch(/^\/_astro\//);
+				expect(src, `${page} → ${src}`).toMatch(/\.(webp|avif)$/);
+			}
+		}
+	});
+
+	it('gives every image intrinsic dimensions so the layout cannot shift', () => {
+		for (const page of eachPage) {
+			for (const img of documents[page].querySelectorAll('img')) {
+				const src = img.getAttribute('src') ?? '';
+				expect(Number(img.getAttribute('width')), src).toBeGreaterThan(0);
+				expect(Number(img.getAttribute('height')), src).toBeGreaterThan(0);
+			}
+		}
+	});
+
+	// The hashed asset URLs are unknowable to theme-switcher.ts, so index.astro
+	// hands them over on a data attribute. Both themes must be present.
+	it('hands the theme switcher both hero variants', () => {
+		const hero = documents['/'].querySelector('#home-hero-image');
+		const variants = JSON.parse(
+			hero?.getAttribute('data-theme-variants') ?? '{}',
+		);
+		expect(Object.keys(variants).sort()).toEqual(['dark', 'default']);
+		for (const variant of Object.values(variants) as {
+			src: string;
+			alt: string;
+		}[]) {
+			expect(variant.alt.trim()).toBeTruthy();
+			expect(existsSync(join(DIST, variant.src.slice(1))), variant.src).toBe(
+				true,
+			);
+		}
 	});
 
 	it('ships the theme script inline so the theme cannot flash', () => {

@@ -41,7 +41,7 @@ This is a static marketing site; there is no business logic to cover. Tests earn
 
 - **A regression you just fixed.** Every fix in `test/components/button.test.ts` traces to a real defect — the class list that shipped `undefined`, the empty `target=""`. Leave the comment explaining what broke.
 - **A convention a reader would otherwise "clean up".** The honeypot tests in `test/components/contact-form.test.ts` exist so that deleting the hidden `Username` field fails CI instead of quietly restoring the spam problem.
-- **Things that fail invisibly in a static build.** A missing `alt`, a dropped canonical tag, a nav link to a route that no longer exists, an unresolved template expression in an attribute. None of these break the build; all of them are covered in `test/build/output.test.ts`.
+- **Things that fail invisibly in a static build.** A missing `alt`, a dropped canonical tag, a nav link to a route that no longer exists, an unresolved template expression in an attribute, a content image that slipped back into `public/` and so skipped build-time optimization, an `<img>` with no intrinsic dimensions. None of these break the build; all of them are covered in `test/build/output.test.ts`.
 
 Adding a page means the page shows up in `test/build/output.test.ts`'s `PAGES` map and in the route list in `test/unit/config.test.js`. Both fail loudly if a nav or footer entry points somewhere that was never built.
 

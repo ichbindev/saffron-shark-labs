@@ -1,15 +1,17 @@
 ---
-
+import { Image } from 'astro:assets';
+import logoImage from '../assets/images/logo.png';
 ---
 
 <div class="logo__image">
-	<picture>
-		<img
-			src="/assets/images/logo.png"
-			alt="Saffron Shark Labs Logo"
-			id="saffron-shark-logo-image"
-		/>
-	</picture>
+	<Image
+		src={logoImage}
+		alt="Saffron Shark Labs Logo"
+		id="saffron-shark-logo-image"
+		width={150}
+		format="webp"
+		loading="eager"
+	/>
 	<p class="saffron-shark-logo-text">Saffron Shark Labs</p>
 </div>
 
@@ -21,6 +23,7 @@
 	}
 	#saffron-shark-logo-image {
 		width: 75px;
+		height: auto;
 	}
 	.saffron-shark-logo-text {
 		width: fit-content;

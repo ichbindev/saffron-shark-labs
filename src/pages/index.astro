@@ -1,12 +1,33 @@
 ---
+import { getImage } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import { Button } from '@components/odyssey-theme';
 import Layout from '../layouts/Page.astro';
 import TextAndImageHero from '../components/sections/heros/TextAndImageHero.astro';
+import dayImage from '../assets/images/home/day.jpeg';
+import nightImage from '../assets/images/home/night.jpeg';
 
 const seo = {
 	title: 'Saffron Shark Labs',
 	description: 'Software Development and Consulting Services',
+};
+
+/*
+ * The hero art follows the theme, so both variants are optimized at build time
+ * and the generated URLs are handed to the theme switcher through a data
+ * attribute. That keeps the hashed asset paths out of theme-switcher.ts, which
+ * has no way to know them.
+ */
+const HERO_WIDTH = 1200;
+
+const [day, night] = await Promise.all([
+	getImage({ src: dayImage, width: HERO_WIDTH, format: 'webp' }),
+	getImage({ src: nightImage, width: HERO_WIDTH, format: 'webp' }),
+]);
+
+const heroVariants = {
+	default: { src: day.src, alt: 'Swimming shark in the daytime' },
+	dark: { src: night.src, alt: 'Swimming shark at night' },
 };
 ---
 
@@ -28,9 +49,14 @@ const seo = {
 		</div>
 		<picture slot="image-container">
 			<img
-				src="/assets/images/home/day.jpeg"
-				alt="Swimming shark in the daytime"
 				id="home-hero-image"
+				src={heroVariants.default.src}
+				alt={heroVariants.default.alt}
+				width={day.attributes.width}
+				height={day.attributes.height}
+				fetchpriority="high"
+				decoding="async"
+				data-theme-variants={JSON.stringify(heroVariants)}
 			/>
 		</picture>
 	</TextAndImageHero>

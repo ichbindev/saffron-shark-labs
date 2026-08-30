@@ -10,10 +10,11 @@ Because the site is small and static, the bar for changes is different from an a
 
 ## Tech Stack
 
-- **Framework:** Astro 4 (static output, file-based routing)
+- **Framework:** Astro 7 (static output, file-based routing)
 - **Components:** `.astro` files; one Lit web component (`theme-switcher`) via `@astrojs/lit`
 - **Styling:** Plain CSS — global stylesheets in `src/styles/` plus Astro scoped `<style>` blocks. No Tailwind, no CSS framework, no preprocessor.
 - **Icons:** `astro-icon` with the `@iconify-json/ic` and `@iconify-json/mdi` sets
+- **Images:** `astro:assets` — content images live in `src/assets/` and are re-encoded to webp at build time
 - **Content:** `@astrojs/mdx` is installed but no MDX content exists today
 - **Package Manager:** npm (`package-lock.json` is the committed lockfile; Netlify runs `npm run build`)
 
@@ -23,7 +24,7 @@ Because the site is small and static, the bar for changes is different from an a
 npm install        # Install dependencies (also installs the pre-commit hook)
 npm run dev        # Dev server (localhost:4321)
 npm run build      # Production build to dist/
-npm run preview    # Serve the built dist/ locally
+npm run preview    # Serve the built dist/ locally (localhost:4322)
 npm run lint       # Prettier in check mode
 npm run format     # Prettier over the whole repo
 npm run typecheck  # astro check
@@ -58,9 +59,10 @@ If a change is visual, also run `npm run dev` and look at the affected page **in
 | `src/components/sections/`    | Page-level content blocks, including `heros/`                       |
 | `src/components/form-fields/` | Input, select, textarea primitives                                  |
 | `src/components/forms/`       | Assembled forms (`ContactForm.astro`)                               |
+| `src/assets/`                 | Content images — optimized at build time by `astro:assets`          |
 | `src/config/`                 | Site settings, nav items, footer lists and socials                  |
 | `src/styles/`                 | `index.css` imports reset → theme → typography → global             |
-| `public/assets/`              | Fonts and images, served verbatim at `/assets/...`                  |
+| `public/`                     | Fonts, favicon, `social.png` — served verbatim, never optimized     |
 | `test/`                       | `unit/`, `components/`, `build/` — see `conventions/testing.md`     |
 | `dist/`                       | Build output — gitignored, never edit                               |
 
@@ -91,5 +93,5 @@ One-off how-tos live in `guidance/`:
 - Do not hard-code colors, font sizes, or radii — use the custom properties in `src/styles/theme.css` and `src/styles/typography.css`.
 - Do not add tracking, analytics, or third-party scripts without being asked. `BaseHead.astro` has an empty analytics slot already guarded against `localhost`; leave it empty unless the change is specifically to add analytics.
 - Do not delete the honeypot field in `ContactForm.astro`. It looks like dead code and is not — see `conventions/forms.md`.
-- Do not commit large unoptimized images. See `conventions/site-config-and-assets.md`.
+- Do not put a content image in `public/`. It skips build-time optimization entirely — the four images that were there totalled 3.7MB and now ship as 347kB of webp. `test/build/output.test.ts` fails if one reappears. See `conventions/site-config-and-assets.md`.
 - Do not leave commented-out blocks of markup behind. `index.astro` already carries one; don't add more.

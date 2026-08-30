@@ -49,15 +49,35 @@ The Lit theme switcher imports its own SVG strings from `src/components/theme-sw
 
 Pass icon dimensions as numbers (`width={24}`), not strings (`width="24px"`) — `astro-icon` types them as numbers, and `npm run typecheck` fails on the string form.
 
+## Images: `src/assets/`, not `public/`
+
+**Every content image goes in `src/assets/`, is imported, and is rendered through `astro:assets`.** Astro re-encodes it to webp at build time, at the width you ask for, and emits a content-hashed filename that can be cached forever. The four images this site uses were 3.7MB of jpeg/png in `public/`; the same images now ship as 347kB — the logo alone went from 431kB to 3kB.
+
+```astro
+---
+import { Image } from 'astro:assets';
+import aboutImage from '../../assets/images/about/about.jpeg';
+---
+
+<Image src={aboutImage} alt="…" width={1200} format="webp" loading="eager" />
+```
+
+An image referenced by path from `public/` skips all of that, so `test/build/output.test.ts` fails if any `<img>` on a built page has a `src` outside `/_astro/`.
+
+- **Always pass `width`.** The sources are 2400px squares; 1200 is already 2× the largest display size on this site. Without it Astro emits the image at full size.
+- **Let the component set `width`/`height` on the tag.** They are the intrinsic dimensions and they are what stops the page reflowing as the image loads; a build test enforces that both are present.
+- **`loading="eager"` / `fetchpriority="high"` on above-the-fold heroes.** They are the largest contentful paint; lazy-loading them makes the page slower, not faster.
+- **Every image needs real `alt` text**, and if a variant swaps in at runtime it needs its own.
+
+The home hero has two variants that follow the theme. Because `astro:assets` hashes the output filenames, `theme-switcher.ts` cannot know them — `index.astro` calls `getImage()` for both and passes the results on a `data-theme-variants` attribute, which the switcher reads. Do not reintroduce hardcoded image paths in the switcher.
+
 ## `public/`
 
-Served verbatim at the site root — `public/assets/images/logo.png` is `/assets/images/logo.png`. Reference these with plain absolute-path strings; they are not imported or processed.
+Served verbatim at the site root and **never processed**. Only three kinds of file belong here:
 
 - `public/assets/fonts/` — Lato and Roboto Serif, self-hosted as `.woff2` + `.woff`, declared in `src/styles/typography.css` with `font-display: swap`. Self-hosting is deliberate: no Google Fonts request at runtime. Adding a weight means adding both file formats and an `@font-face` block.
-- `public/assets/images/` — page imagery, organized by page (`home/`, `about/`).
-- `public/favicon.png`, `public/social.png` — favicon and the default Open Graph card.
-
-**Image discipline.** Hero images are full-bleed and are the heaviest thing on the page; they have already been re-encoded once to shrink them. Resize and compress before committing, and give every `<img>` a real `alt`. `astro:assets` is not in use — images are plain `<img>` tags inside `<picture>` — so nothing optimizes them for you at build time.
+- `public/favicon.png` — referenced by a literal `<link rel="icon">` path.
+- `public/social.png` — the default Open Graph card. It has to stay at a stable, unhashed URL because it is resolved against `Astro.site` and handed to crawlers.
 
 `assets/` at the repo root (not `public/assets/`) holds two README badge SVGs from the upstream theme and is not part of the site.
 
@@ -65,6 +85,8 @@ Served verbatim at the site root — `public/assets/images/logo.png` is `/assets
 
 ## Build and deploy
 
-`netlify.toml` is the whole deploy config: publish `dist/`, command `npm run build`. Branch and environment settings live in the Netlify dashboard, not in the repo. `@astrojs/sitemap` generates `dist/sitemap.xml` from `site` in `astro.config.mjs`.
+`netlify.toml` holds the deploy config — publish `dist/`, command `npm run build` — plus one redirect. Branch and environment settings live in the Netlify dashboard, not in the repo.
+
+`@astrojs/sitemap` v3 emits `sitemap-index.xml` and `sitemap-0.xml`, where the v0.1 the repo used before emitted a single `sitemap.xml`. The redirect in `netlify.toml` keeps the old `/sitemap.xml` URL working for anything already pointing at it — Search Console submissions, crawler caches. **If you resubmit the sitemap to Search Console, submit `/sitemap-index.xml`.** `@astrojs/sitemap` generates `dist/sitemap.xml` from `site` in `astro.config.mjs`.
 
 `dist/` and `node_modules/` are gitignored. `.astro/` is partly tracked (`settings.json`, `types.d.ts`) with `icon.d.ts` ignored — leave that arrangement alone.
