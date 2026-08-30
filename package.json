@@ -2,6 +2,7 @@
 	"name": "saffron-shark-labs",
 	"version": "3.1.0",
 	"private": true,
+	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "git@github.com:ichbindev/saffron-shark-labs.git"
@@ -11,9 +12,17 @@
 		"start": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
-		"format": "npx prettier -w ."
+		"lint": "prettier --check .",
+		"format": "prettier --write .",
+		"typecheck": "astro check",
+		"test": "vitest run test/unit test/components",
+		"test:watch": "vitest test/unit test/components",
+		"test:build": "vitest run test/build",
+		"check": "npm run lint && npm run typecheck && npm run test",
+		"prepare": "simple-git-hooks"
 	},
 	"devDependencies": {
+		"@astrojs/check": "^0.9.10",
 		"@astrojs/lit": "^4.0.1",
 		"@astrojs/mdx": "^2.1.1",
 		"@astrojs/sitemap": "^0.1.0",
@@ -23,7 +32,16 @@
 		"astro": "^4.15.9",
 		"astro-icon": "^1.1.0",
 		"date-fns": "^2.28.0",
+		"linkedom": "^0.18.13",
 		"lit": "^3.1.2",
-		"prettier-plugin-astro": "^0.0.12"
+		"prettier": "^3.9.6",
+		"prettier-plugin-astro": "^0.14.1",
+		"pretty-quick": "^4.2.2",
+		"simple-git-hooks": "^2.14.0",
+		"typescript": "^5.9.3",
+		"vitest": "^2.1.9"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "npx pretty-quick --staged"
 	}
 }
