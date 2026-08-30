@@ -1,8 +1,6 @@
 {
 	"extends": "astro/tsconfigs/base",
 	"compilerOptions": {
-		"experimentalDecorators": true,
-		"useDefineForClassFields": false,
 		"baseUrl": "src",
 		"types": ["astro/client"],
 		"paths": {

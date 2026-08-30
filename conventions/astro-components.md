@@ -115,13 +115,13 @@ Reuse that pattern rather than adding a separate link component. When `newTab` i
 
 ## Client-side JavaScript
 
-Pages ship no JS by default. There are exactly three places it exists, and each is a deliberate choice:
+Pages ship no JS by default, and **no external `.js` file is emitted at all** — the three scripts that exist are small enough that Astro inlines them into the HTML. A build test enforces that. Each one is a deliberate choice:
 
 - `Header.astro` — an inline `<script type="module">` for the mobile menu toggle, which also locks body scroll while the menu is open.
-- `ThemeProvider.astro` — an `is:inline` script that reads `localStorage.theme` and sets `data-theme` on the document element. It must stay inline and un-bundled so it runs before first paint; otherwise the page flashes the wrong theme.
-- `theme-switcher.ts` — a Lit custom element, the one component that needs real reactivity.
+- `ThemeProvider.astro` — an `is:inline` script that reads `localStorage.theme`, falls back to `prefers-color-scheme`, and sets `data-theme` on the document element. It must stay inline and un-bundled so it runs before first paint; otherwise the page flashes the wrong theme.
+- `theme-switcher.ts` — a plain custom element, registered by a `<script>` in `Footer.astro`. It builds its own shadow DOM; the site's custom properties pierce shadow DOM, so it stays on-theme without importing a stylesheet.
 
-Anything new that needs JS should follow the same rule: inline script in the component that owns it, and only if plain CSS cannot do the job (hover, focus, `:target`, and `details/summary` usually can).
+Anything new that needs JS follows the same rule: an inline script in the component that owns it, and only if plain CSS cannot do the job (hover, focus, `:target`, and `details/summary` usually can). **Do not reach for a UI framework.** This component was a Lit element; Lit cost ~29kB of runtime across four requests to render two buttons, and `@astrojs/lit` had been unmaintained since June 2024.
 
 ## Accessibility
 

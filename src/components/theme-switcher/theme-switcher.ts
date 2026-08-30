@@ -1,92 +1,126 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
 import { classicThemeIcon, darkThemeIcon } from './icons';
 
-const themes = [
-	{
-		name: 'default',
-		icon: classicThemeIcon,
-		label: 'Light',
-	},
-	{
-		name: 'dark',
-		icon: darkThemeIcon,
-		label: 'Dark',
-	},
+type ThemeOption = {
+	/** Value written to `data-theme` and to localStorage. */
+	name: string;
+	/** Preview SVG, authored in ./icons.ts. */
+	icon: string;
+	label: string;
+};
+
+const themes: ThemeOption[] = [
+	{ name: 'default', icon: classicThemeIcon, label: 'Light' },
+	{ name: 'dark', icon: darkThemeIcon, label: 'Dark' },
 ];
 
-@customElement('theme-switcher')
-export class ThemeSwitcher extends LitElement {
-	static styles = [
-		css`
-			:host {
-				display: block;
-			}
-			button {
-				display: inline-flex;
-				outline: none;
-				border: none;
-				background-color: transparent;
-				border: 2px solid transparent;
-				border-radius: 20rem;
-				padding: 1px;
-				cursor: pointer;
-				transition: border var(--theme-transition);
-			}
-			button[active] {
-				border: 2px solid var(--theme-primary);
-				box-shadow: 0 0 12px 1px var(--theme-primary);
-			}
-			button:hover {
-				border: 2px solid var(--theme-primary);
-			}
-			.theme-switcher__container {
-				margin: 1rem 0;
-				display: grid;
-				grid-template-columns: repeat(5, 1fr);
-			}
-			.theme-select__container {
-				display: flex;
-				flex-direction: column;
-				align-items: flex-start;
-				justify-content: start;
-			}
-			.theme-select__container p {
-				font-size: var(--font-size-sm);
-			}
-		`,
-	];
+/*
+ * Scoped to the shadow root. The site's custom properties pierce shadow DOM,
+ * so the switcher stays on-theme without importing any stylesheet.
+ */
+const styles = `
+	:host {
+		display: block;
+	}
+	.theme-switcher__container {
+		margin: 1rem 0;
+		display: flex;
+		gap: 1rem;
+	}
+	.theme-select__container {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.theme-select__container p {
+		margin: 0.25rem 0 0 0;
+		font-size: var(--font-size-sm);
+	}
+	button {
+		display: inline-flex;
+		padding: 1px;
+		background-color: transparent;
+		border: 2px solid transparent;
+		border-radius: 20rem;
+		outline: none;
+		cursor: pointer;
+		transition: border var(--theme-transition);
+	}
+	button:hover,
+	button:focus-visible {
+		border-color: var(--theme-primary);
+	}
+	button[active] {
+		border-color: var(--theme-primary);
+		box-shadow: 0 0 12px 1px var(--theme-primary);
+	}
+`;
 
-	// set the _doc element
-	private _doc = document.firstElementChild;
+/**
+ * Theme picker for the footer.
+ *
+ * Was a Lit component; Lit cost ~24kB of runtime to render two buttons, and
+ * @astrojs/lit has not been published since June 2024. This is a plain custom
+ * element with no dependencies.
+ */
+export class ThemeSwitcher extends HTMLElement {
+	#buttons = new Map<string, HTMLButtonElement>();
 
-	@property({ type: String })
-	theme: string | null = null;
+	connectedCallback() {
+		if (!this.shadowRoot) this.#render();
+		this.#setTheme(this.#preferredTheme());
+	}
 
-	private _getCurrentTheme() {
-		// A stored choice wins; otherwise follow the operating system preference.
+	/** A stored choice wins; otherwise follow the operating system preference. */
+	#preferredTheme() {
 		const storedTheme = localStorage.getItem('theme');
-		if (storedTheme !== null) {
-			this._setTheme(storedTheme);
-			return;
+		if (storedTheme !== null) return storedTheme;
+
+		return window.matchMedia?.('(prefers-color-scheme: dark)').matches
+			? 'dark'
+			: 'default';
+	}
+
+	#render() {
+		const root = this.attachShadow({ mode: 'open' });
+
+		const style = document.createElement('style');
+		style.textContent = styles;
+
+		const container = document.createElement('div');
+		container.className = 'theme-switcher__container';
+
+		for (const theme of themes) {
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.title = `Enable ${theme.label} Theme`;
+			// Build-time constant markup from ./icons.ts, never user input.
+			button.innerHTML = theme.icon;
+			button.addEventListener('click', () => this.#setTheme(theme.name));
+
+			const label = document.createElement('p');
+			label.textContent = theme.label;
+
+			const wrapper = document.createElement('div');
+			wrapper.className = 'theme-select__container';
+			wrapper.append(button, label);
+
+			container.append(wrapper);
+			this.#buttons.set(theme.name, button);
 		}
 
-		const prefersDark = window.matchMedia?.(
-			'(prefers-color-scheme: dark)',
-		).matches;
-		this._setTheme(prefersDark ? 'dark' : 'default');
+		root.append(style, container);
 	}
 
-	firstUpdated() {
-		this._getCurrentTheme();
-	}
-
-	private _setTheme(theme: string) {
-		this._doc.setAttribute('data-theme', theme);
-		this._setHeroImage(theme);
+	#setTheme(theme: string) {
+		document.firstElementChild?.setAttribute('data-theme', theme);
+		this.#setHeroImage(theme);
 		localStorage.setItem('theme', theme);
-		this.theme = theme;
+
+		for (const [name, button] of this.#buttons) {
+			const active = name === theme;
+			button.toggleAttribute('active', active);
+			button.setAttribute('aria-pressed', String(active));
+		}
 	}
 
 	/*
@@ -95,13 +129,12 @@ export class ThemeSwitcher extends LitElement {
 	 * attribute rather than this file hardcoding paths it cannot know.
 	 *
 	 * Every other page has no #home-hero-image, so this must tolerate the element
-	 * being absent — without the guard, _setTheme throws before it can persist
-	 * the choice.
+	 * being absent — without the guard, setting a theme throws before it can
+	 * persist the choice.
 	 */
-	private _setHeroImage(theme: string) {
-		const heroImage = document.querySelector(
-			'#home-hero-image',
-		) as HTMLImageElement | null;
+	#setHeroImage(theme: string) {
+		const heroImage =
+			document.querySelector<HTMLImageElement>('#home-hero-image');
 		if (!heroImage?.dataset.themeVariants) return;
 
 		let variants: Record<string, { src: string; alt: string }>;
@@ -117,23 +150,8 @@ export class ThemeSwitcher extends LitElement {
 		heroImage.src = variant.src;
 		heroImage.alt = variant.alt;
 	}
+}
 
-	render() {
-		const themeButtons = html`${themes.map(theme => {
-			return html`
-				<div class="theme-select__container">
-					<button
-						@click=${() => this._setTheme(theme.name)}
-						?active=${this.theme === theme.name}
-						title=${`Enable ${theme.label} Theme`}
-					>
-						${theme.icon}
-					</button>
-					<p>${theme.label}</p>
-				</div>
-			`;
-		})}`;
-
-		return html` <div class="theme-switcher__container">${themeButtons}</div> `;
-	}
+if (!customElements.get('theme-switcher')) {
+	customElements.define('theme-switcher', ThemeSwitcher);
 }

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseHTML } from 'linkedom';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -214,6 +214,32 @@ describe('site output', () => {
 	it('ships the theme script inline so the theme cannot flash', () => {
 		const html = readFileSync(join(DIST, 'index.html'), 'utf8');
 		expect(html).toContain("localStorage.getItem('theme')");
+	});
+
+	/*
+	 * The theme switcher is a plain custom element. It was a Lit component, which
+	 * cost ~29kB of framework runtime across four requests to render two buttons.
+	 * Nothing on this site should reintroduce a client framework.
+	 */
+	it('ships no framework runtime', () => {
+		const bundled = readdirSync(join(DIST, '_astro'), { recursive: true })
+			.map(String)
+			.filter(file => file.endsWith('.js'));
+		expect(bundled).toEqual([]);
+
+		const html = readFileSync(join(DIST, 'index.html'), 'utf8');
+		for (const marker of ['lit-html', 'astro-island', 'client:only']) {
+			expect(html, marker).not.toContain(marker);
+		}
+	});
+
+	it('renders the theme switcher on every page, since it lives in the footer', () => {
+		for (const page of eachPage) {
+			expect(
+				documents[page].querySelector('theme-switcher'),
+				page,
+			).not.toBeNull();
+		}
 	});
 
 	it('keeps the contact honeypot in the built page', () => {

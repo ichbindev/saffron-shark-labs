@@ -1,7 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
 import Container from '../core/Container.astro';
-import { ThemeSwitcher } from '../theme-switcher/theme-switcher';
 
 const { footerSocials, footerLists, copyrightName, background, color } =
 	Astro.props;
@@ -52,7 +51,7 @@ const { footerSocials, footerLists, copyrightName, background, color } =
 			}
 			<div>
 				<p><strong>Theme</strong></p>
-				<ThemeSwitcher client:only="lit" />
+				<theme-switcher></theme-switcher>
 			</div>
 		</div>
 		<div class="footer-copyright__container">
@@ -60,6 +59,10 @@ const { footerSocials, footerLists, copyrightName, background, color } =
 		</div>
 	</Container>
 </footer>
+
+<script>
+	import '../theme-switcher/theme-switcher';
+</script>
 
 <style>
 	footer {
